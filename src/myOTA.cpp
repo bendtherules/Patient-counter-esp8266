@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
+#include <ESP8266HTTPClient.h>
 #include <WiFiUdp.h>
 #include <networkCredentials.h>
 #include <version.h>
@@ -8,6 +9,9 @@
 #include <ESP8266httpUpdate.h>
 #include <WiFiClientSecure.h>
 #include "myDisplay.h"
+
+WiFiClient wifiClient;
+HTTPClient httpClient;
 
 void setupOTALocal() {
   Serial.println("Booting");
@@ -70,9 +74,44 @@ void handleOTALocal() {
   ArduinoOTA.handle();
 }
 
+bool isOTARemoteNeeded() {
+  const char* url = "http://patient.bendtherules.in/versioning.html";
+
+  Serial.println("RU version check: Started");
+  if (httpClient.begin(wifiClient, url)) {
+    // start connection and send HTTP header
+    int httpCode = httpClient.GET();
+
+    // httpCode will be negative on error
+    if (httpCode == HTTP_CODE_OK) {
+      String payload = httpClient.getString();
+      Serial.println("RU version check: Response below -");
+      Serial.println(payload);
+
+      int newVersion = payload.toInt();
+      Serial.printf("RU version check:  Remote=%d Current=%d\n", newVersion, BUILD_NUMBER);
+      if (newVersion > BUILD_NUMBER) {
+        Serial.println("RU version check: Update needed");
+        return true;
+      } else {
+        Serial.println("RU version check: Skip update");
+        showInsideInfo("RU:Skip");
+        return false;
+      }
+    } else {
+      Serial.printf("RU version check: GET failed, error: %s\n", httpClient.errorToString(httpCode).c_str());
+      showInsideInfo("RU: Version failed");
+      return false;
+    }
+    httpClient.end();
+  } else {
+    Serial.println("RU version check: Connection failed");
+    showInsideInfo("RU: Version failed");
+    return false;
+  }
+}
+
 void handleOTARemote() {
-  WiFiClient client;
-  
   ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
   ESPhttpUpdate.onStart([]() {
     Serial.println("RU: Started");
@@ -96,5 +135,8 @@ void handleOTARemote() {
     showInsideInfo("RU:Failed");
   });
 
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://patient.bendtherules.in/build/esp12e/firmware.bin");
+  bool isUpdateNeeded = isOTARemoteNeeded();
+  if (isUpdateNeeded) {
+    ESPhttpUpdate.update(wifiClient, "http://patient.bendtherules.in/build/esp12e/firmware.bin");
+  }
 }
