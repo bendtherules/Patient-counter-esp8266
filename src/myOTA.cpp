@@ -6,6 +6,7 @@
 #include <version.h>
 #include <ArduinoOTA.h>
 #include <ESP8266httpUpdate.h>
+#include <WiFiClientSecure.h>
 
 void setupOTALocal() {
   Serial.println("Booting");
@@ -44,7 +45,11 @@ void handleOTALocal() {
 }
 
 void handleOTARemote() {
-  WiFiClient client;
+  BearSSL::WiFiClientSecure client;
+  const uint8_t fingerprint[20] = {
+    0xe9, 0x4e, 0x54, 0xa9, 0x30, 0x86, 0x3d, 0x53, 0x5b, 0xa0, 0xd2, 0xd3, 0xa5, 0xdd, 0x0d, 0xe3, 0xbd, 0xa8, 0xc9, 0xc2,
+  };
+  client.setFingerprint(fingerprint);
   t_httpUpdate_return ret = ESPhttpUpdate.update(client, "https://github.com/bendtherules/Patient-counter-esp8266/raw/main/.pio/build/esp12e/firmware.bin", VERSION_SHORT);
   switch(ret) {
       case HTTP_UPDATE_FAILED:
