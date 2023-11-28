@@ -75,6 +75,7 @@ const String KEY_D = "0x1FE20DF";
 const String KEY_ON = "0x1FE48B7";
 const String KEY_OFF = "0x1FE48B7";
 const String KEY_MODE = "0x1FE58A7";
+const String KEY_RPT = "0x1FE10EF";
 
 
 char lastPressedKey = '\0';
@@ -117,6 +118,9 @@ void handleKeyPress(char pressedKey) {
       Serial.println("Pressed update. Updating via remote server..");
       playBuzzer(BUZZER_PIN, TONE_BEEP_TWICE);
       handleOTARemote();
+    }
+    if (pressedKey == 'I') {
+      printIPInfo();
     }
     // If pressed number
     uint8_t currentNumberEntered = pressedKey - '0';
@@ -208,6 +212,8 @@ void loop() {
         pressedKey = 'R';
       } else if (hexKey == KEY_MODE) {
         pressedKey = 'U';
+      } else if (hexKey == KEY_RPT) {
+        pressedKey = 'I';
       }
       if (pressedKey != '\0') {
         handleKeyPress(pressedKey);

@@ -4,3 +4,5 @@ void setupOTALocal();
 void handleOTALocal();
 
 void handleOTARemote();
+
+void printIPInfo();

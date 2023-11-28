@@ -11,9 +11,11 @@
 
 void setupOTALocal() {
   Serial.println("Booting");
-  char infoBuffer[LCD_COLUMNS];
-  sprintf(infoBuffer, "W:%s", WIFI_SSID);
-  showInsideInfo(infoBuffer);
+  {
+    char infoBuffer[LCD_COLUMNS];
+    sprintf(infoBuffer, "W:%s", WIFI_SSID);
+    showInsideInfo(infoBuffer);
+  }
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
@@ -33,9 +35,11 @@ void setupOTALocal() {
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress:%u%%\r", (progress / (total / 100)));
-    char infoBuffer[LCD_COLUMNS];
-    sprintf(infoBuffer, "LU:P:%u%%", (progress / (total / 100)));
-    showInsideInfo(infoBuffer);
+    {
+      char infoBuffer[LCD_COLUMNS];
+      sprintf(infoBuffer, "LU:P:%u%%", (progress / (total / 100)));
+      showInsideInfo(infoBuffer);
+    }
   });
   ArduinoOTA.onError([](ota_error_t error) {
     Serial.printf("Error[%u]:", error);
@@ -44,11 +48,22 @@ void setupOTALocal() {
     else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
     else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
     else if (error == OTA_END_ERROR) Serial.println("End Failed");
+    showInsideInfo("LU:Failed");
   });
   ArduinoOTA.begin();
   Serial.println("Ready");
   Serial.print("IP address:");
   Serial.println(WiFi.localIP());
+  showInsideInfo("Ready");
+}
+
+void printIPInfo() {
+  String localIPStr = WiFi.localIP().toString();
+  char localIP[LCD_COLUMNS];
+  localIPStr.toCharArray(localIP, LCD_COLUMNS);
+  char infoBuffer[LCD_COLUMNS];
+  sprintf(infoBuffer, "W:%s", localIP);
+  showInsideInfo(infoBuffer);
 }
 
 void handleOTALocal() {
