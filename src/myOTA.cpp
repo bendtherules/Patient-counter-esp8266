@@ -2,10 +2,12 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiUdp.h>
-#include <ArduinoOTA.h>
 #include <networkCredentials.h>
+#include <version.h>
+#include <ArduinoOTA.h>
+#include <ESP8266httpUpdate.h>
 
-void setupOTA() {
+void setupOTALocal() {
   Serial.println("Booting");
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -37,6 +39,22 @@ void setupOTA() {
   Serial.println(WiFi.localIP());
 }
 
-void handleOTA() {
+void handleOTALocal() {
   ArduinoOTA.handle();
+}
+
+void handleOTARemote() {
+  WiFiClient client;
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "https://github.com/bendtherules/Patient-counter-esp8266/raw/main/.pio/build/esp12e/firmware.bin", VERSION_SHORT);
+  switch(ret) {
+      case HTTP_UPDATE_FAILED:
+          Serial.println("[update] Update failed.");
+          break;
+      case HTTP_UPDATE_NO_UPDATES:
+          Serial.println("[update] Update no Update.");
+          break;
+      case HTTP_UPDATE_OK:
+          Serial.println("[update] Update ok."); // may not be called since we reboot the ESP
+          break;
+  }
 }

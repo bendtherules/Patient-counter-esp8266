@@ -1,4 +1,6 @@
 #include <Arduino.h>
 
-void setupOTA();
-void handleOTA();
+void setupOTALocal();
+void handleOTALocal();
+
+void handleOTARemote();
