@@ -52,14 +52,15 @@ void handleOTARemote() {
   client.setFingerprint(fingerprint);
   t_httpUpdate_return ret = ESPhttpUpdate.update(client, "https://github.com/bendtherules/Patient-counter-esp8266/raw/main/.pio/build/esp12e/firmware.bin", VERSION_SHORT);
   switch(ret) {
-      case HTTP_UPDATE_FAILED:
-          Serial.println("[update] Update failed.");
-          break;
-      case HTTP_UPDATE_NO_UPDATES:
-          Serial.println("[update] Update no Update.");
-          break;
-      case HTTP_UPDATE_OK:
-          Serial.println("[update] Update ok."); // may not be called since we reboot the ESP
-          break;
+    case HTTP_UPDATE_FAILED:
+      Serial.println("[update] Update failed.");
+      break;
+    case HTTP_UPDATE_NO_UPDATES:
+      Serial.print("[update] Update no Update. Reason -");
+      Serial.println(ESPhttpUpdate.getLastErrorString());
+      break;
+    case HTTP_UPDATE_OK:
+      Serial.println("[update] Update ok."); // may not be called since we reboot the ESP
+      break;
   }
 }
