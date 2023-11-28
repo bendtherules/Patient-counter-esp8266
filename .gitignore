@@ -1,10 +1,9 @@
 # Commit firmware.bin for upload
-.pio/*
-!.pio/build
-.pio/build/*
-!.pio/build/esp12e
-.pio/build/esp12e/*
-!.pio/build/esp12e/firmware.bin
+.pio
+build/*
+!build/esp12e
+build/esp12e/*
+!build/esp12e/firmware.bin
 
 # Don't save network credentials
 include/networkCredentials.h

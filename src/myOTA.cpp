@@ -45,19 +45,29 @@ void handleOTALocal() {
 }
 
 void handleOTARemote() {
-  BearSSL::WiFiClientSecure client;
+  WiFiClient client;
   const uint8_t fingerprint[20] = {
     0xe9, 0x4e, 0x54, 0xa9, 0x30, 0x86, 0x3d, 0x53, 0x5b, 0xa0, 0xd2, 0xd3, 0xa5, 0xdd, 0x0d, 0xe3, 0xbd, 0xa8, 0xc9, 0xc2,
   };
-  client.setFingerprint(fingerprint);
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "https://github.com/bendtherules/Patient-counter-esp8266/raw/main/.pio/build/esp12e/firmware.bin", VERSION_SHORT);
+  // client.setFingerprint(fingerprint);
+  // client.setInsecure();
+  const char* host = "www.github.com";
+  const int httpsPort = 80;
+  Serial.println(host);
+  if (!client.connect(host, httpsPort)) {
+    Serial.println("connection failed");
+    return;
+  } else {
+    Serial.println("connection worked");
+  }
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://github.com/bendtherules/Patient-counter-esp8266/raw/main ", VERSION_SHORT);
   switch(ret) {
     case HTTP_UPDATE_FAILED:
-      Serial.println("[update] Update failed.");
+      Serial.print("[update] Update failed. Reason - ");
+      Serial.println(ESPhttpUpdate.getLastErrorString());
       break;
     case HTTP_UPDATE_NO_UPDATES:
-      Serial.print("[update] Update no Update. Reason -");
-      Serial.println(ESPhttpUpdate.getLastErrorString());
+      Serial.println("[update] Update no Update.");
       break;
     case HTTP_UPDATE_OK:
       Serial.println("[update] Update ok."); // may not be called since we reboot the ESP
