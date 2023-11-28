@@ -146,7 +146,7 @@ void showOutsideNumberSingle(uint8_t number, DISPLAY_POSITION pos, bool show = f
     for (size_t tmp_x = 0; tmp_x < FONT_WIDTH; tmp_x++)
     {
       uint8_t ledIndex = tmp_y * LED_WIDTH + tmp_x + (pos == POSITION_LEFT ? 0 : FONT_WIDTH);
-      leds[ledIndex + SKIP_LEDS] = FONT_NUMBERS[number][tmp_y][tmp_x] ? (pos == POSITION_LEFT ? myPink : myRed) : CRGB::Black;
+      leds[ledIndex + SKIP_LEDS] = FONT_NUMBERS[number][tmp_y][tmp_x] ? (pos == POSITION_LEFT ? myBlue : myRed) : CRGB::Black;
     }
   }
   if (show) {

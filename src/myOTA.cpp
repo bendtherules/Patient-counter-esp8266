@@ -79,10 +79,7 @@ bool isOTARemoteNeeded() {
 
   Serial.println("RU version check: Started");
   if (httpClient.begin(wifiClient, url)) {
-    // start connection and send HTTP header
     int httpCode = httpClient.GET();
-
-    // httpCode will be negative on error
     if (httpCode == HTTP_CODE_OK) {
       String payload = httpClient.getString();
       Serial.println("RU version check: Response below -");
