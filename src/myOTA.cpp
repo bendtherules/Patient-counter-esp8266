@@ -46,20 +46,8 @@ void handleOTALocal() {
 
 void handleOTARemote() {
   WiFiClient client;
-  // const uint8_t fingerprint[20] = {
-  //   0xe9, 0x4e, 0x54, 0xa9, 0x30, 0x86, 0x3d, 0x53, 0x5b, 0xa0, 0xd2, 0xd3, 0xa5, 0xdd, 0x0d, 0xe3, 0xbd, 0xa8, 0xc9, 0xc2,
-  // };
-  // client.setFingerprint(fingerprint);
-  // client.setInsecure();
-  const char* host = "www.github.com";
-  const int httpsPort = 80;
-  Serial.println(host);
-  if (!client.connect(host, httpsPort)) {
-    Serial.println("connection failed");
-    return;
-  } else {
-    Serial.println("connection worked");
-  }
+  
+  Serial.println("Updating from remote...");
   t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://patient.bendtherules.in/build/esp12e/firmware.bin", VERSION_SHORT);
   switch(ret) {
     case HTTP_UPDATE_FAILED:
