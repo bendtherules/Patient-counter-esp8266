@@ -34,7 +34,7 @@ void setupOTALocal() {
     showInsideInfo("LU:Restarting..");
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
-    Serial.printf("Progress:%u%%\r", (progress / (total / 100)));
+    Serial.printf("LU: Progress:%u%%\r", (progress / (total / 100)));
     {
       char infoBuffer[LCD_COLUMNS];
       sprintf(infoBuffer, "LU:P:%u%%", (progress / (total / 100)));
@@ -73,22 +73,28 @@ void handleOTALocal() {
 void handleOTARemote() {
   WiFiClient client;
   
-  Serial.println("Updating from remote...");
-  showInsideInfo("RU:Start");
-  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://patient.bendtherules.in/build/esp12e/firmware.bin", VERSION_SHORT);
-  switch(ret) {
-    case HTTP_UPDATE_FAILED:
-      Serial.print("update:Update failed. Reason - ");
-      Serial.println(ESPhttpUpdate.getLastErrorString());
-      showInsideInfo("RU:Failed");
-      break;
-    case HTTP_UPDATE_NO_UPDATES:
-      Serial.println("update:Update no Update.");
-      showInsideInfo("RU:Skip");
-      break;
-    case HTTP_UPDATE_OK:
-      Serial.println("update:Update ok."); // may not be called since we reboot the ESP
-      showInsideInfo("RU:Done");
-      break;
-  }
+  ESPhttpUpdate.setLedPin(LED_BUILTIN, LOW);
+  ESPhttpUpdate.onStart([]() {
+    Serial.println("RU: Started");
+    showInsideInfo("RU:Started");
+  });
+  ESPhttpUpdate.onEnd([]() {
+    Serial.println("RU: Finished. Restarting..");
+    showInsideInfo("RU:Restarting..");
+  });
+  ESPhttpUpdate.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("RU: Progress:%u%%\r", (progress / (total / 100)));
+    {
+      char infoBuffer[LCD_COLUMNS];
+      sprintf(infoBuffer, "RU:P:%u%%", (progress / (total / 100)));
+      showInsideInfo(infoBuffer);
+    }
+  });
+  ESPhttpUpdate.onError([](int err) {
+    Serial.printf("RU: Failed with code %d\n", err);
+    Serial.println(ESPhttpUpdate.getLastErrorString());
+    showInsideInfo("RU:Failed");
+  });
+
+  t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://patient.bendtherules.in/build/esp12e/firmware.bin");
 }
