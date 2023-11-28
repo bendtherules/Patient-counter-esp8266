@@ -7,6 +7,7 @@
 #include <ArduinoOTA.h>
 #include <ESP8266httpUpdate.h>
 #include <WiFiClientSecure.h>
+#include "myDisplay.h"
 
 void setupOTALocal() {
   Serial.println("Booting");
@@ -19,12 +20,17 @@ void setupOTALocal() {
   }
   ArduinoOTA.onStart([]() {
     Serial.println("Start");
+    showInsideInfo("[LU] Start");
   });
   ArduinoOTA.onEnd([]() {
     Serial.println("\nEnd");
+    showInsideInfo("[LU] Done");
   });
   ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
     Serial.printf("Progress: %u%%\r", (progress / (total / 100)));
+    char infoBuffer[16];
+    sprintf(infoBuffer, "[LU] P:%u%%", (progress / (total / 100)));
+    showInsideInfo(infoBuffer);
   });
   ArduinoOTA.onError([](ota_error_t error) {
     Serial.printf("Error[%u]: ", error);
@@ -48,17 +54,21 @@ void handleOTARemote() {
   WiFiClient client;
   
   Serial.println("Updating from remote...");
+  showInsideInfo("[RU] Start");
   t_httpUpdate_return ret = ESPhttpUpdate.update(client, "http://patient.bendtherules.in/build/esp12e/firmware.bin", VERSION_SHORT);
   switch(ret) {
     case HTTP_UPDATE_FAILED:
       Serial.print("[update] Update failed. Reason - ");
       Serial.println(ESPhttpUpdate.getLastErrorString());
+      showInsideInfo("[RU] Failed");
       break;
     case HTTP_UPDATE_NO_UPDATES:
       Serial.println("[update] Update no Update.");
+      showInsideInfo("[RU] Skip");
       break;
     case HTTP_UPDATE_OK:
       Serial.println("[update] Update ok."); // may not be called since we reboot the ESP
+      showInsideInfo("[RU] Done");
       break;
   }
 }

@@ -109,6 +109,7 @@ void handleKeyPress(char pressedKey) {
     if (pressedKey == 'R') {
       Serial.println("Pressed restart. Rstarting..");
       Serial.flush();
+      showInsideInfo("Restarting..");
       playBuzzer(BUZZER_PIN, TONE_BEEP_LONG);
       ESP.restart();
     }

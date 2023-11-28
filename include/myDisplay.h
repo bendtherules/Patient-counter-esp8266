@@ -7,3 +7,4 @@ enum DISPLAY_POSITION {
 
 void setupDisplay();
 void showNumber(uint8_t number);
+void showInsideInfo(const char* text);

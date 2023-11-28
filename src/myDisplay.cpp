@@ -174,15 +174,27 @@ void showOutsideNumber(uint8_t number) {
   FastLED.show();
 }
 
+void clearLCDLine(int line) {               
+  lcd.setCursor(0, line);
+  for(int n = 0; n < LCD_COLUMNS; n++){
+    lcd.print(" ");
+  }
+  lcd.setCursor(0, line);
+}
+
 void showInsideNumber(int number) {
-  lcd.clear();
-  lcd.setCursor(0,0);
+  clearLCDLine(0);
   lcd.print(number);
 }
 
 void showNumber(uint8_t number) {
   showOutsideNumber(number);
   showInsideNumber(number);
+}
+
+void showInsideInfo(const char* text) {
+  clearLCDLine(1);
+  lcd.print(text);
 }
 
 void setupDisplay() {
