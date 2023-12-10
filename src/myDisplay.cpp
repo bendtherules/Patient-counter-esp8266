@@ -201,7 +201,7 @@ void setupDisplay() {
   // LED matrix setup
   FastLED.addLeds<NEOPIXEL, DATA_PIN>(leds, NUM_LEDS);  // GRB ordering is assumed
   FastLED.setMaxPowerInVoltsAndMilliamps(5, 400);
-  FastLED.setBrightness(20);
+  FastLED.setBrightness(255);
   showOutsideNumberSingle(3, POSITION_RIGHT, true);
   delay(10);
   cleanDisplay();
