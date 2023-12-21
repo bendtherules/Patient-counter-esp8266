@@ -10,7 +10,6 @@
 // How many leds in your strip?
 #define NUM_LEDS ACTUAL_LEDS + SKIP_LEDS
 
-
 // For led chips like WS2812, which have a data line, ground, and power, you just
 // need to define DATA_PIN.
 #define DATA_PIN D8

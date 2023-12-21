@@ -217,9 +217,9 @@ void loop() {
       }
       if (pressedKey != '\0') {
         handleKeyPress(pressedKey);
+        lastPressedKey = pressedKey;
+        lastMillis = millis();
       }
-      lastPressedKey = pressedKey;
-      lastMillis = millis();
     }
     yield();             // Feed the WDT (again)
   }
