@@ -2,11 +2,13 @@
 #include <FastLED.h>
 #include <LiquidCrystal_I2C.h>
 
-// How many leds in your strip?
-#define NUM_LEDS 65
-
 // Skip indicator led
-#define SKIP_LEDS 1
+#define SKIP_LEDS 0
+
+#define ACTUAL_LEDS 64
+
+// How many leds in your strip?
+#define NUM_LEDS ACTUAL_LEDS + SKIP_LEDS
 
 
 // For led chips like WS2812, which have a data line, ground, and power, you just
