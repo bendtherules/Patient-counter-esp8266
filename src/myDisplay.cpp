@@ -3,7 +3,7 @@
 #include <LiquidCrystal_I2C.h>
 
 // Skip indicator led
-#define SKIP_LEDS 0
+#define SKIP_LEDS 1
 
 #define ACTUAL_LEDS 64
 
