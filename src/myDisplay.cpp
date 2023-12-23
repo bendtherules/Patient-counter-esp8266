@@ -157,7 +157,7 @@ void showOutsideNumberSingle(uint8_t number, DISPLAY_POSITION pos, bool show = f
 
 void cleanDisplay() {
   fill_solid(leds, NUM_LEDS, CRGB::Black);
-  fill_solid(leds, SKIP_LEDS, CRGB::Blue);
+  fill_solid(leds, SKIP_LEDS, myRed);
 }
 
 void showOutsideNumber(uint8_t number) {
